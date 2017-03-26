@@ -1,5 +1,5 @@
 ---
 applications:
- - name: GetStartedNode
+ - name: ibmbluehack2017
    random-route: true
    memory: 256M

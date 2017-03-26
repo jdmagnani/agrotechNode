@@ -2,6 +2,8 @@ var express = require("express");
 var app = express();
 var cfenv = require("cfenv");
 var bodyParser = require('body-parser')
+var request = require("request");
+
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -60,6 +62,132 @@ app.get("/api/visitors", function (request, response) {
       response.json(names);
     }
   });
+});
+
+
+app.get("/api/clima", function (req, res) {
+
+    var latitude = req.query.latitude;
+    var longitude = req.query.longitude;
+
+    var url = 'https://a6f24a9c-2266-44a4-8a6e-2cfced295164:uTQZ8gzzDb@twcservice.mybluemix.net/api/weather/v1/geocode/' + latitude + '/' + longitude + '/forecast/hourly/48hour.json';
+
+    var state = req.query.state;
+
+
+    //console.log (latitude + ' - ' + longitude);
+
+    var options = {
+        url: url
+    };
+
+    request(options, function(error, response, body) {
+    if(!error && response.statusCode == 200) {
+     var result = JSON.parse(body);
+     //console.log(result);
+     res.send(result);
+    } else {
+     res.send('Unable to get alerts.');
+    }
+});
+
+});
+
+app.get("/api/lista", function (req, res) {
+
+    res.send ({"pins": [
+       {
+         "pin1": {
+           "id": "pin1",
+           "lat": "89898989",
+           "long": "099009",
+           "status": "IRRIGANDO",
+           "cultura": "SOJA",
+           "intervalo": "1200mins"
+         }
+       },
+       {
+         "pin2": {
+           "id": "pin2",
+           "lat": "89898989",
+           "long": "099009",
+           "status": "IRRIGANDO",
+           "cultura": "SOJA",
+           "intervalo": "1200mins"
+         }
+       }
+     ]
+ });
+
+});
+
+app.get("/api/area", function (req, res) {
+
+    var pin = req.query.id;
+
+    if(pin == "pin1"){
+        res.send ({
+             "pin1": {
+               "id": "pin1",
+               "lat": "89898989",
+               "long": "099009",
+               "status": "IRRIGANDO",
+               "cultura": "SOJA",
+               "intervalo": "1200mins"
+             }
+         });
+    }
+
+    if(pin == "pin2"){
+        res.send ({
+             "pin2": {
+               "id": "pin2",
+               "lat": "89898989",
+               "long": "099009",
+               "status": "IRRIGANDO",
+               "cultura": "SOJA",
+               "intervalo": "1200mins"
+             }
+         });
+    }
+
+});
+
+
+app.get("/api/climaDetail", function (req, res) {
+    var latitude = req.query.latitude;
+    var longitude = req.query.longitude;
+    var host = req.get('host');
+    var url = 'http://' + host + '/api/clima?latitude=' + latitude + '&longitude=' + longitude;
+    console.log(host);
+    console.log(url);
+    var state = req.query.state;
+
+    var options = {
+        url: url
+    };
+
+    request(options, function(error, response, body) {
+    if(!error && response.statusCode == 200) {
+     var result = JSON.parse(body);
+     var arraySize = result.forecasts.length;
+     var resultSimples = [];
+
+     for (var forecast of result.forecasts){
+         var dataHora = forecast.fcst_valid_local;
+         var temp = forecast.temp;
+         var clima = forecast.phrase_22char;
+         var precipitacao = forecast.qpf;
+
+         resultSimples.push({data: dataHora, temp: temp, clima: clima, precipitacao: precipitacao});
+     }
+
+     res.send(JSON.stringify(resultSimples));
+    } else {
+     res.send('Unable to get alerts.');
+    }
+});
+
 });
 
 

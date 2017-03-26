@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <link rel="stylesheet" href="css/telas.css">
+
+  <script src="js/jquery.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="https://s3-us-west-2.amazonaws.com/reallysimpleweather/reallysimpleweather-1.1.0.min.js"></script>
+
+  <title>Watson Green</title>
+
+
+<!-- STYLE -->
+  <style>
+      #map {
+       height: 400px;
+       width: 100%;
+      }
+
+      .container {
+        background-image: url('https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/4wUUz9NPg/cornfield-large-field-of-young-corn-countryside-landscape-rural-agriculture-background-russia_sxa4488bl_thumbnail-medium01.jpg');
+        background-size: cover;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+
+      .watson_figure {
+        width: 150px;
+        float: right;
+      }
+   </style>
+</head>
+<body>
+
+<!--  -->
+<script>
+
+	function setPinInfo(spanID){
+
+		var data = document.getElementById(spanID);
+
+		data.innerHTML = "Soja";
+
+		alert(data);
+
+	}	
+
+  function setWeather(position){
+    reallySimpleWeather.weather({
+        wunderkey: '', // leave blank for Yahoo
+        location: position, //your location
+        woeid: '', // "Where on Earth ID"
+        unit: 'c', // 'c' also works
+        success: function(weather) {
+          html = '<h2>'+weather.temp+'°'+weather.units.temp+'</h2>';
+          html += '<ul><li>'+weather.city+', '+weather.region+'</li>';
+          html += '<li>'+weather.currently+'</li>';
+          html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
+    	  document.getElementById('weather').innerHTML = html;
+        },
+        error: function(error) {
+    	  document.getElementById('weather').innerHTML = '<p>'+error+'</p>';
+        }
+    });
+  }
+  
+  
+  
+
+$( document ).ready(function() {
+
+});
+
+
+</script>
+
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1>Watson Green <img class="watson_figure" src="http://pogostrategy.com/wp-content/uploads/2015/09/IBM_Watson_PoweredBy_pos.png"></h1>
+
+      </div>
+    </div>
+
+    <br>
+
+  <div class="row">
+      <div class="col-lg-8 text-left">
+      <div id="map"></div>
+        <script>
+		  var cultura;
+		  var agrotoxico;
+		  var intervaloIrrigacao;
+          function initMap() {
+            var farm_1 = {lat: -13.032755, lng: -41.516145};
+            var farm_2 = {lat: -17.117679, lng: -47.623274};
+            var farm_3 = {lat: -16.158041, lng: -46.402378};
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 5,
+              center: farm_1,
+            });
+            var marker1 = new google.maps.Marker({
+              position: farm_1,
+              map: map,
+              icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            });
+
+            var marker2 = new google.maps.Marker({
+              position: farm_2,
+              map: map
+            });
+
+            var marker3 = new google.maps.Marker({
+              position: farm_3,
+              map: map
+            });
+
+            marker1.addListener('click', function() {
+			  
+			  
+              setWeather(this.getPosition());
+              map.setZoom(13);
+              map.setCenter(this.getPosition());
+              map.setMapTypeId('satellite');
+			  
+			  cultura = document.getElementById("cultura");
+			  cultura.innerHTML = "Soy";
+			  agrotoxico = document.getElementById("agrotoxico");
+			  agrotoxico.innerHTML = "Roundup";
+			  intervaloIrrigacao = document.getElementById("intervaloIrrigacao");
+			  intervaloIrrigacao.innerHTML = "1200mins";
+            });
+
+            marker2.addListener('click', function() {
+			  cultura = document.getElementById("cultura");
+			  cultura.innerHTML = "Corn";
+			  agrotoxico = document.getElementById("agrotoxico");
+			  agrotoxico.innerHTML = "Roundup";
+			  intervaloIrrigacao = document.getElementById("intervaloIrrigacao");
+			  intervaloIrrigacao.innerHTML = "3600mins";
+			  
+              setWeather(this.getPosition());
+              map.setZoom(13);
+              map.setCenter(this.getPosition());
+              map.setMapTypeId('satellite');
+            });
+
+            marker3.addListener('click', function() {
+			  cultura = document.getElementById("cultura");
+			  cultura.innerHTML = "Sugar Cane";
+			  agrotoxico = document.getElementById("agrotoxico");
+			  agrotoxico.innerHTML = "Gilfosato";
+			  intervaloIrrigacao = document.getElementById("intervaloIrrigacao");
+			  intervaloIrrigacao.innerHTML = "5000mins";
+			  
+              setWeather(this.getPosition());
+              map.setZoom(13);
+              map.setCenter(this.getPosition());
+              map.setMapTypeId('satellite');
+            });
+
+          }
+        </script>
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDax15dySLRrjnj4XUPGFxDUi7dqSWigac&callback=initMap">
+        </script>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">Weather</div>
+          <div class="panel-body">
+              <div id="weather"></div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">Status</div>
+          <div class="panel-body">
+            <p>Sensor 1: Irrigating<span id="sensor1" ></span></p>
+            <p>Sensor 2: Stopped<span id="sensor2" ></span></p>
+            <p>Sensor 3: Stopped<span id="sensor3" ></span></p>
+          </div>
+        </div>
+    </div>
+  </div>
+
+    <br>
+	
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">Parametrizacao</div>
+          <div class="panel-body">
+            <p>Culture: <span id="cultura" ></span></p>
+            <p>Agrotoxic: <span id="agrotoxico" ></span></p>
+            <p>Irrigation Interval: <span id="intervaloIrrigacao" ></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
